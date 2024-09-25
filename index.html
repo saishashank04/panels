@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Image Gallery</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 16px;
+				padding: 20px;
+				background-color: #f0f0f0;
+			}
+			.image-container {
+				cursor: pointer;
+				border: 1px solid #ff8484;
+				border-radius: 8px;
+				overflow: hidden;
+				transition: transform 0.2s;
+			}
+			.image-container:hover {
+				transform: scale(1.05);
+			}
+			img {
+				display: block;
+				width: 300px; /* Set a fixed width for the images */
+				height: auto; /* Maintain aspect ratio */
+			}
+		</style>
+	</head>
+	<body>
+		<script>
+			// Fetch the JSON file
+			fetch("panels.json")
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error("Network response was not ok");
+					}
+					return response.json();
+				})
+				.then((imageLinks) => {
+					const body = document.body;
+
+					imageLinks = Object.values(imageLinks.data)
+						.filter((item) => item.dhd)
+						.map((item) => item.dhd);
+
+					for (let i = 0; i < imageLinks.length; i++) {
+						const container = document.createElement("div");
+						container.className = "image-container";
+
+						// Create anchor element
+						const link = document.createElement("a");
+						link.href = imageLinks[i];
+						link.target = "_blank"; // Open in new tab
+
+						const img = document.createElement("img");
+						img.src = imageLinks[i];
+						img.loading = "lazy";
+
+						link.appendChild(img); // Append img to link
+						container.appendChild(link); // Append link to container
+						body.appendChild(container); // Append container to body
+					}
+				})
+				.catch((error) => {
+					console.error(
+						"There was a problem with the fetch operation:",
+						error,
+					);
+				});
+		</script>
+	</body>
+</html>
